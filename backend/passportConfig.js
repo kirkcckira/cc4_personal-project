@@ -7,8 +7,7 @@ module.exports = (passport) => {
     new localStrategy((username, password, done) => {
       User.findOne({ username: username }, (err, user) => {
         if (err) throw err;
-        if (!user)
-          return done(new Error("No user found for given username"), false);
+        if (!user) return done(new Error("User not found passport"), false);
         bcrypt.compare(password, user.password, (err, result) => {
           if (err) throw err;
           if (result) {

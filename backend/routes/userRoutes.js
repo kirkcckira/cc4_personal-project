@@ -21,8 +21,11 @@ router.patch("/", userControllers.update);
 
 router.post("/login", (req, res, next) => {
   passport.authorize("local", (err, user, info) => {
-    if (err) throw err;
-    if (!user) res.send("No user found for given username.");
+    if (err) {
+      console.log(err);
+      return res.status(500).send("Incorrect Password");
+    }
+    if (!user) return res.status(500).send("No User found for given Username.");
     else {
       req.logIn(user, (err) => {
         if (err) throw err;
