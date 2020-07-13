@@ -7,6 +7,7 @@ import axios from "axios";
 import NavBar from "../../navigation/NavBar.component";
 
 import { AuthContext } from "../../context/auth-context";
+import { isElementOfType } from "react-dom/test-utils";
 
 const moment = require("moment");
 
@@ -16,6 +17,9 @@ const StoryShow = () => {
   const [ready, setReady] = useState(false);
   const storyId = useParams().storyId;
   const [redirect, setRedirect] = useState(false);
+  const [image, setImage] = useState();
+
+  // let image;
 
   useEffect(() => {
     fetchData();
@@ -28,7 +32,81 @@ const StoryShow = () => {
     });
     setStory(data.data.foundStory);
     console.log(data.data.foundStory);
-    setReady(true);
+
+    if (!data.data.foundStory.image) {
+      setImage("");
+      setReady(true);
+    } else if (data.data.foundStory.image.length === 1) {
+      setImage(
+        <img
+          src={data.data.foundStory.image[0]}
+          className="img-fluid img-thumbnail mh-100 d-block mx-auto"
+          alt="Image"
+        />
+      );
+      setReady(true);
+    } else {
+      setImage(
+        <div
+          id="carouselExampleIndicators"
+          className="carousel slide"
+          data-ride="carousel"
+        >
+          <ol className="carousel-indicators">
+            {data.data.foundStory.image.map((image, i) => (
+              <li
+                key={i}
+                className={i === 0 ? "active" : ""}
+                data-target="#carouselExampleIndicators"
+                data-slide-to={i}
+              ></li>
+            ))}
+          </ol>
+          <div className="carousel-inner">
+            {data.data.foundStory.image.map((image, i) => (
+              <div
+                key={i}
+                className={i === 0 ? "carousel-item active" : "carousel-item"}
+              >
+                <img
+                  className="d-block mx-auto"
+                  src={data.data.foundStory.image[i]}
+                />
+              </div>
+            ))}
+          </div>
+          <a
+            className="carousel-control-prev"
+            href="#carouselExampleIndicators"
+            role="button"
+            data-slide="prev"
+          >
+            <span aria-hidden="true">
+              <i
+                className="fas fa-chevron-left carousel-control"
+                style={{ color: "#0087ff" }}
+              ></i>
+            </span>
+            <span className="sr-only">Previous</span>
+          </a>
+          <a
+            className="carousel-control-next"
+            href="#carouselExampleIndicators"
+            role="button"
+            data-slide="next"
+          >
+            <span aria-hidden="true">
+              <i
+                className="fas fa-chevron-right carousel-control"
+                style={{ color: "#0087ff" }}
+              ></i>
+            </span>
+            <span className="sr-only">Next</span>
+          </a>
+        </div>
+      );
+      setReady(true);
+    }
   };
 
   const commentHandleDelete = async (commentId) => {
@@ -76,17 +154,8 @@ const StoryShow = () => {
                 <h3 className="m-auto font-weight-bold">{story.title}</h3>
               </div>
               <div className="row">
-                <div
-                  className="container"
-                  style={{ maxWidth: "700px", maxHeight: "500px" }}
-                >
-                  {story.image && (
-                    <img
-                      src={story.image[0]}
-                      className="img-fluid img-thumbnail mh-100 d-block mx-auto"
-                      alt=""
-                    />
-                  )}
+                <div className="col">
+                  <div className="container">{image}</div>
                 </div>
               </div>
               <div className="row my-3">

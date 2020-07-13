@@ -19,7 +19,7 @@ const StoryItem = (props) => {
                   style={{ maxWidth: "400px", maxHeight: "400px" }}
                 >
                   <img
-                    src={item.image}
+                    src={item.image[0]}
                     className="img-fluid img-thumbnail mh-100 d-block mx-auto"
                     alt=""
                   />
